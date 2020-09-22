@@ -1,5 +1,15 @@
-from bottle import get, post, run, template, request, debug, redirect
+from bottle import get, post, template, request, redirect
 import sqlite3
+import os
+
+# Are we executing at pythonanywhere?
+ON_PYTHONANYWHERE = "PYTHONANYWHERE_DOMAIN" in os.environ
+ 
+# Local vs Pythonanywhere
+if ON_PYTHONANYWHERE:
+    from bottle import default_app
+else:
+    from bottle import run, debug
 
 @get('/')
 def get_show_list():
@@ -27,4 +37,9 @@ def post_new_item():
     #return "The new item is  [" + new_item + "] ..."
     redirect("/")
 
-run(host='localhost', port=8080)
+
+if ON_PYTHONANYWHERE:
+     application = dafault_app()
+else:
+    debug(True)
+    run(host='localhost', port=8080)
