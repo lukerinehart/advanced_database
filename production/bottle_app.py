@@ -7,7 +7,7 @@ ON_PYTHONANYWHERE = "PYTHONANYWHERE_DOMAIN" in os.environ
  
 # Local vs Pythonanywhere
 if ON_PYTHONANYWHERE:
-    from bottle import default_application
+    from bottle import default_app
 else:
     from bottle import run, debug
 
@@ -38,8 +38,18 @@ def post_new_item():
     redirect("/")
 
 
+@get('/delete_item/<id:int>')   # Guarantees it grabs an int
+def get_delete_item(id):
+    connection = sqlite3.connect("todo.db")
+    cursor = connection.cursor()
+    cursor.execute("DELETE from todo WHERE id=?", (id,) )    #A touple, ie 10 would be 1 and 0 without it
+    connection.commit()
+    cursor.close()
+    redirect("/")
+
+
 if ON_PYTHONANYWHERE:
-     application = dafault_application()
+     application = default_app()
 else:
     debug(True)
     run(host='localhost', port=8080)
