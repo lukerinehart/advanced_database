@@ -21,6 +21,16 @@ def get_show_list():
     #return str(result)
     return template("show_list", rows = result)    # creates file, templates are like html
 
+@get("/set_status/<id:int>/<value:int>")
+def set_status(id, value):
+    connection = sqlite3.connect("todo.db")
+    cursor = connection.cursor()
+    cursor.execute("update todo set status=? where id=?", (value,id))
+    connection.commit()
+    cursor.close()
+    redirect("/")
+
+
 @get("/new_item")
 def get_new_item(): #returns template for a form to fill out
     return template("new_item")
@@ -47,6 +57,26 @@ def get_delete_item(id):
     cursor.close()
     redirect("/")
 
+
+@get("/update_item/<id:int>")
+def get_update_item(id):
+    connection = sqlite3.connect("todo.db")
+    cursor = connection.cursor()
+    cursor.execute("select * from todo where id=?", (id,))
+    result = cursor.fetchall()
+    cursor.close()
+    return template("update_item", row=result[0])
+
+@post("/update_item")
+def post_update_item():    
+    id = int(request.forms.get("id").strip())
+    updated_item = request.forms.get("updated_item").strip()
+    connection = sqlite3.connect("todo.db")
+    cursor = connection.cursor()
+    cursor.execute("update todo set task=? where id=?", (updated_item, id))
+    connection.commit()
+    cursor.close()
+    redirect("/")
 
 if ON_PYTHONANYWHERE:
      application = default_app()
