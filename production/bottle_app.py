@@ -57,11 +57,6 @@ def get_delete_item(id):
     delete_item(id)
     redirect("/")
 
-@get("/visit")
-def get_visit():
-    return("0")
-
-
 if ON_PYTHONANYWHERE:
     # on PA
     application = default_app()
